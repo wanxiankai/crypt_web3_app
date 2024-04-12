@@ -1,6 +1,5 @@
 import React, { useContext } from 'react'
 import { TransactionContext } from '../context/TransactionContext';
-import dummyData from '../utils/dummyData'
 import { shortenAccountAddress } from '../utils/shortenAccountAddress'
 import useFetch from '../hooks/useFetch'
 
@@ -8,6 +7,7 @@ const DEFAULT_GIF_URL = 'https://metro.co.uk/wp-content/uploads/2015/05/pokemon_
 
 const TransactionCard = ({ addressTo, addressFrom, timestamp, message, keyword, amount, url = DEFAULT_GIF_URL }) => {
   const gifUrl = useFetch({ keyword })
+  // const gifUrl = DEFAULT_GIF_URL
   return (
     <div className='bg-[#181918] m-4 flex flex-1
       2xl:min-w-[450px]
@@ -66,7 +66,7 @@ export default function Transactions() {
               </h3>
             )}
         <div className='flex flex-wrap justify-center items-center mt-10'>
-          {transactions.reverse().map((transaction, index) => (
+          {transactions.map((transaction, index) => (
             <TransactionCard key={index} {...transaction} />
           ))}
         </div>

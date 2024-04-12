@@ -1,6 +1,8 @@
-import { useState } from 'react'
+import { useState, useContext } from 'react'
 import { HiMenuAlt4 } from 'react-icons/hi'
 import { AiOutlineClose } from 'react-icons/ai'
+import { TransactionContext } from '../context/TransactionContext'
+import { shortenAccountAddress } from '../utils/shortenAccountAddress'
 
 import logo from '../../images/logo.png'
 
@@ -13,6 +15,7 @@ const NavbarItem = ({ title, classProps }) => {
 }
 
 export default function NavBar() {
+  const { connectWallet, currentAccount } = useContext(TransactionContext)
   const [toggleMenu, setToggleMenu] = useState(false)
 
   return (
@@ -24,9 +27,21 @@ export default function NavBar() {
         {["Market", "Exchange", "Tutorials", "Wallets"].map((item, index) => (
           <NavbarItem key={item + index} title={item} />
         ))}
-        <li className='bg-[#2952e3] py-2 px-7 mx-4 rounded-full cursor-pointer hover:bg-[#2546bd]'>
-          Login
-        </li>
+        {
+          currentAccount ?
+            (<li>
+              <p>{shortenAccountAddress(currentAccount)}</p>
+            </li>)
+            :
+            (
+              <li
+                onClick={connectWallet}
+                className='bg-[#2952e3] py-2 px-7 mx-4 rounded-full cursor-pointer hover:bg-[#2546bd]'>
+                Login
+              </li>
+            )
+        }
+
       </ul>
       <div className='flex relative'>
         {

@@ -51,7 +51,6 @@ export const TransactionContextProvider = ({ children }) => {
         try {
             if (!ethereum) return alert('Make sure you have metamask!')
             const accounts = await ethereum.request({ method: 'eth_accounts' })
-            console.log(accounts)
             if (accounts.length) {
                 setCurrentAccount(accounts[0])
                 getAllTransactions();
@@ -80,7 +79,7 @@ export const TransactionContextProvider = ({ children }) => {
         try {
             if (!ethereum) return alert('Make sure you have metamask!')
             const accounts = await ethereum.request({ method: 'eth_requestAccounts' })
-            console.log(accounts)
+            console.log('account===',accounts)
             setCurrentAccount(accounts[0])
         } catch (error) {
             console.error(error)
