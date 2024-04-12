@@ -81,6 +81,7 @@ export const TransactionContextProvider = ({ children }) => {
             const accounts = await ethereum.request({ method: 'eth_requestAccounts' })
             console.log('account===',accounts)
             setCurrentAccount(accounts[0])
+            getAllTransactions();
         } catch (error) {
             console.error(error)
             throw new Error('Error connecting wallet')
