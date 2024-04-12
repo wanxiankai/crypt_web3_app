@@ -5,6 +5,7 @@ import { BsInfoCircle } from 'react-icons/bs'
 
 import { Loader } from './'
 import { TransactionContext } from '../context/TransactionContext'
+import { shortenAccountAddress } from '../utils/shortenAccountAddress'
 
 const commonStyles = "min-h-[70px] sm:px-0 px-2 sm:min-w-[120px] flex justify-center items-center border-[0.5px] border-gray-400 text-sm font-light text-white";
 
@@ -71,7 +72,7 @@ export default function Welcome() {
               </div>
               <div>
                 <p className='text-white font-light text-sm'>
-                  Address
+                  {shortenAccountAddress(currentAccount)}
                 </p>
                 <p className='text-white font-semibold text-lg mt-1'>
                   Ethereum
