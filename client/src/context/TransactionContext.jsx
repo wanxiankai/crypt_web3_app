@@ -103,7 +103,7 @@ export const TransactionContextProvider = ({ children }) => {
                 }]
             });
 
-            const transactionHash = await transactionContract.addToBlockchain(addressTo, parsedAmount, keyword, message)
+            const transactionHash = await transactionContract.addToBlockchain(addressTo, parsedAmount, message, keyword)
             setIsLoading(true)
             console.log(`Loading - ${transactionHash.hash}`)
             await transactionHash.wait()
@@ -112,7 +112,7 @@ export const TransactionContextProvider = ({ children }) => {
 
             const transactionCount = await transactionContract.getTransactionCount()
             setTransactionCount(transactionCount.toNumber())
-
+            // window.location.reload(); I don't like to reload the page
         } catch (error) {
             console.error(error)
             throw new Error('Error sending transaction')
@@ -122,7 +122,7 @@ export const TransactionContextProvider = ({ children }) => {
     useEffect(() => {
         checkIfWalletIsConnected();
         checkIfTransactionsExist();
-    }, [])
+    }, [transactionCount])
 
     return (
         <TransactionContext.Provider value={{ connectWallet, currentAccount, formData, isLoading, handleChange, sendTransaction,transactions }}>
