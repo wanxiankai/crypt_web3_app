@@ -19,10 +19,33 @@ export const TransactionContextProvider = ({ children }) => {
     const [formData, setFormData] = useState({ addressTo: '', amount: '', message: '', ketword: '' })
     const [isLoading, setIsLoading] = useState(false)
     const [transactionCount, setTransactionCount] = useState(localStorage.getItem('transactionCount'))
+    const [transactions, setTransactions] = useState([])
 
     const handleChange = (e, name) => {
         setFormData((preState) => ({ ...preState, [name]: e.target.value }))
     }
+
+    const getAllTransactions = async () => {
+        try {
+            if (!ethereum) return alert('Make sure you have metamask!')
+            const transactionContract = getEtherContract()
+            const availableTransactions = await transactionContract.getAllTransactions()
+            const structuredTransactions = availableTransactions.map((transaction) => ({
+                addressTo: transaction.reciver,
+                addressFrom: transaction.sender,
+                timestamp: new Date(transaction.timestamp.toNumber() * 1000).toLocaleString(),
+                message: transaction.message,
+                keyword: transaction.keyword,
+                amount: parseInt(transaction.amount._hex) / (10 ** 18),
+            }))
+            console.log(structuredTransactions)
+            setTransactions(structuredTransactions)
+        } catch (error) {
+            console.error(error)
+            throw new Error('Error getting all transactions')
+        }
+    }
+
 
     const checkIfWalletIsConnected = async () => {
         try {
@@ -31,7 +54,7 @@ export const TransactionContextProvider = ({ children }) => {
             console.log(accounts)
             if (accounts.length) {
                 setCurrentAccount(accounts[0])
-                // getAllTransactions()
+                getAllTransactions();
             } else {
                 console.log('No wallet connected')
             }
@@ -40,6 +63,18 @@ export const TransactionContextProvider = ({ children }) => {
             throw new Error('Error checking wallet connection')
         }
     }
+
+    const checkIfTransactionsExist = async () => {
+        try {
+            const transactionContract = getEtherContract()
+            const transactionCount = await transactionContract.getTransactionCount()
+            window.localStorage.setItem('transactionCount', transactionCount.toNumber())
+        } catch (error) {
+            console.error(error)
+            throw new Error('Error checking transactions')
+        }
+    }
+
 
     const connectWallet = async () => {
         try {
@@ -86,10 +121,11 @@ export const TransactionContextProvider = ({ children }) => {
 
     useEffect(() => {
         checkIfWalletIsConnected();
+        checkIfTransactionsExist();
     }, [])
 
     return (
-        <TransactionContext.Provider value={{ connectWallet, currentAccount, formData, handleChange, sendTransaction }}>
+        <TransactionContext.Provider value={{ connectWallet, currentAccount, formData, isLoading, handleChange, sendTransaction,transactions }}>
             {children}
         </TransactionContext.Provider>
     )
